@@ -32,74 +32,86 @@ var Algorithm=new function(){
 				array=array.concat(this.calculateBlank(tokenP,token,array,false));
 			}
 		}
-		var periodDatalength=300;
+
 		var idxAry=[
-			Math.round(periodDatalength/1),
-			Math.round(periodDatalength/2),
-			Math.round(periodDatalength/3),
-			Math.round(periodDatalength/4),
-			Math.round(periodDatalength/5),
-			Math.round(periodDatalength/6),
-			Math.round(periodDatalength/7),
-			Math.round(periodDatalength/8),
-			Math.round(periodDatalength/9),
-			Math.round(periodDatalength/10),
-			Math.round(periodDatalength/11),
-			Math.round(periodDatalength/12),
-			Math.round(periodDatalength/13),
-			Math.round(periodDatalength/14),
-			Math.round(periodDatalength/15),
-			Math.round(periodDatalength/16),
-			Math.round(periodDatalength/17),
-			Math.round(periodDatalength/18),
-			Math.round(periodDatalength/19),
-			Math.round(periodDatalength/20),
-			Math.round(periodDatalength/21),
-			Math.round(periodDatalength/22),
-			Math.round(periodDatalength/23),
-			Math.round(periodDatalength/24),
-			Math.round(periodDatalength/25),
-			Math.round(periodDatalength/26),
-			Math.round(periodDatalength/27),
-			Math.round(periodDatalength/28),
-			Math.round(periodDatalength/29),
-			Math.round(periodDatalength/30)
-			];
-			
+315,
+158,
+105,
+79,
+63,
+53,
+45,
+39,
+35,
+32,
+29,
+26,
+24,
+23,
+21,
+20,
+19,
+18,
+17,
+16,
+15,
+14,
+13,
+12,
+11,
+10,
+9,
+8,
+7,
+6,
+5,
+4,
+3,
+2,
+1,
+0,
+		];
+				
 		var paramAry=[
-			1/Math.pow(1,3),
-			1/Math.pow(2,3),
-			1/Math.pow(3,3),
-			1/Math.pow(4,3),
-			1/Math.pow(5,3),
-			1/Math.pow(6,3),
-			1/Math.pow(7,3),
-			1/Math.pow(8,3),
-			1/Math.pow(9,3),
-			1/Math.pow(10,3),
-			1/Math.pow(11,3),
-			1/Math.pow(12,3),
-			1/Math.pow(13,3),
-			1/Math.pow(14,3),
-			1/Math.pow(15,3),
-			1/Math.pow(16,3),
-			1/Math.pow(17,3),
-			1/Math.pow(18,3),
-			1/Math.pow(19,3),
-			1/Math.pow(20,3),
-			1/Math.pow(21,3),
-			1/Math.pow(22,3),
-			1/Math.pow(23,3),
-			1/Math.pow(24,3),
-			1/Math.pow(25,3),
-			1/Math.pow(26,3),
-			1/Math.pow(27,3),
-			1/Math.pow(28,3),
-			1/Math.pow(29,3),
-			1/Math.pow(30,3)
+0.064437563,
+-0.016107788,
+-0.008054695,
+0.003866684,
+0.011969825,
+0.016837153,
+0.0205915,
+0.023203599,
+0.024806873,
+0.025938304,
+0.027008572,
+0.027998,
+0.028604799,
+0.028891192,
+0.029435288,
+0.029689824,
+0.02993304,
+0.030164593,
+0.030384267,
+0.030591915,
+0.030787422,
+0.030970704,
+0.031141654,
+0.031300227,
+0.03144635,
+0.031579963,
+0.031701013,
+0.031809449,
+0.031905231,
+0.031988318,
+0.032058679,
+0.032116285,
+0.032161114,
+0.032193147,
+0.032212372,
+0.064437563,
 		];
 		for(i=0;i<array.length;i++){
-			var datatemp=1*array[i];
+			var datatemp=0;
 			for(j=0;j<idxAry.length;j++){
 				if (i-idxAry[j]>=0){
 					datatemp+=paramAry[j]*array[i-idxAry[j]];
@@ -107,17 +119,18 @@ var Algorithm=new function(){
 					datatemp+=paramAry[j]*array[i];
 				}
 			}
-			datatemp=datatemp/2;
 			array[i]=datatemp;
 		}
-		
+
 		for(i=0;i<array.length;i++){
-			var dataOrg=array[i];
+			var dataOrg=array[i]*5;
 			var data;
-			if(dataOrg>32767||dataOrg==Number.POSITIVE_INFINITY){
+			if(dataOrg>32767){
 				data=32767;
-			}else if(dataOrg<-32768||dataOrg==Number.NEGATIVE_INFINITY){
+			}else if(dataOrg<-32768){
 				data=-32768;
+			}else if(dataOrg==null){
+				data=0;
 			}else{
 				data=parseInt(dataOrg);
 				array[i]=data;
@@ -140,9 +153,9 @@ var Algorithm=new function(){
 		}
 		var lengthbit=0;
 		if (isShort){
-			lengthbit=(token.timeLength)*this.SECOND_WIDTH/1000;
+			lengthbit=parseInt((token.timeLength)*this.SECOND_WIDTH/1000);
 		}else{
-			lengthbit=(token.timeLength+200)*this.SECOND_WIDTH/1000;
+			lengthbit=parseInt((token.timeLength+200)*this.SECOND_WIDTH/1000);
 		}
 		for (var i=retData.length;i<lengthbit;i++){
 			retData.push(0);

@@ -12,8 +12,10 @@
 <button onclick="Efw('fenci')">分词</button>
 <br>
 <br>
-<br>
 <button onclick="Efw('agg')">统计字字关系</button>
+<br>
+<br>
+<button onclick="Efw('agg4tone')">四声与字字关系</button>
 
 </body>
 </html>

@@ -1,0 +1,1 @@
+copy *.js all.test

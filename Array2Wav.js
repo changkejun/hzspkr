@@ -1,12 +1,12 @@
 var Array2Wav=new function(){
-	// ƒoƒCƒg”z—ñ‚É•¶š—ñ‚ğ‘‚«‚Ş
+	// ãƒã‚¤ãƒˆé…åˆ—ã«æ–‡å­—åˆ—ã‚’æ›¸ãè¾¼ã‚€
 	this.writeString=function(bytes, val, offset) {
 	    for (var i = 0, l = val.length; i < l; i++) {
 	        bytes[offset + i] = val.charCodeAt(i);
 	    }
 	};
 
-	// ƒoƒCƒg”z—ñ‚É 32-bit ®”‚ğ‘‚«‚Ş
+	// ãƒã‚¤ãƒˆé…åˆ—ã« 32-bit æ•´æ•°ã‚’æ›¸ãè¾¼ã‚€
 	this.writeInt32=function(bytes, val, offset) {
 	    bytes[offset] = val & 255;
 	    val >>>= 8;
@@ -17,7 +17,7 @@ var Array2Wav=new function(){
 	    bytes[offset + 3] = val & 255;
 	};
 
-	// ƒoƒCƒg”z—ñ‚É 16-bit ®”‚ğ‘‚«‚Ş
+	// ãƒã‚¤ãƒˆé…åˆ—ã« 16-bit æ•´æ•°ã‚’æ›¸ãè¾¼ã‚€
 	this.writeInt16=function(bytes, val, offset) {
 	    bytes[offset] = val & 255;
 	    val >>>= 8;
@@ -26,43 +26,43 @@ var Array2Wav=new function(){
 
 	// -----------------------------------------------------------------------------
 	this.fire=function(array){
-		var size = array.length*2;// ƒf[ƒ^ƒTƒCƒY (byte)
-		var channel = 1;         // ƒ`ƒƒƒ“ƒlƒ‹” (1:ƒ‚ƒmƒ‰ƒ‹ or 2:ƒXƒeƒŒƒI)
-		var bytesPerSec = 44100; // ƒTƒ“ƒvƒŠƒ“ƒOƒŒ[ƒg
-		var bitsPerSample = 16;  // ƒTƒ“ƒvƒ‹‚ ‚½‚è‚Ìƒrƒbƒg” (8 or 16)
+		var size = array.length*2;// ãƒ‡ãƒ¼ã‚¿ã‚µã‚¤ã‚º (byte)
+		var channel = 1;         // ãƒãƒ£ãƒ³ãƒãƒ«æ•° (1:ãƒ¢ãƒãƒ©ãƒ« or 2:ã‚¹ãƒ†ãƒ¬ã‚ª)
+		var bytesPerSec = 44100; // ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°ãƒ¬ãƒ¼ãƒˆ
+		var bitsPerSample = 16;  // ã‚µãƒ³ãƒ—ãƒ«ã‚ãŸã‚Šã®ãƒ“ãƒƒãƒˆæ•° (8 or 16)
 
-		var offset = 44;         // ƒwƒbƒ_•”•ª‚ÌƒTƒCƒY
+		var offset = 44;         // ãƒ˜ãƒƒãƒ€éƒ¨åˆ†ã®ã‚µã‚¤ã‚º
 	
-		// ƒoƒCƒg”z—ñ‚ğì¬
+		// ãƒã‚¤ãƒˆé…åˆ—ã‚’ä½œæˆ
 		var bytes = new Uint8Array(offset + size);
-		// ƒwƒbƒ_‘‚«‚İ
-		this.writeString(bytes, 'RIFF', 0);                 // RIFF ƒwƒbƒ_
-		this.writeInt32(bytes, offset + size - 8, 4);       // ƒtƒ@ƒCƒ‹ƒTƒCƒY - 8
-		this.writeString(bytes, 'WAVE', 8);                 // WAVE ƒwƒbƒ_
-		this.writeString(bytes, 'fmt ', 12);                // fmt ƒ`ƒƒƒ“ƒN
-		this.writeInt32(bytes, 16, 16);                     // fmt ƒ`ƒƒƒ“ƒN‚ÌƒoƒCƒg”
-		this.writeInt16(bytes, 1, 20);                      // ƒtƒH[ƒ}ƒbƒgID
-		this.writeInt16(bytes, channel, 22);                // ƒ`ƒƒƒ“ƒlƒ‹”
-		this.writeInt32(bytes, bytesPerSec, 24);            // ƒTƒ“ƒvƒŠƒ“ƒOƒŒ[ƒg
-		this.writeInt32(bytes, bytesPerSec * (bitsPerSample >>> 3) * channel, 28); // ƒf[ƒ^‘¬“x
-		this.writeInt16(bytes, (bitsPerSample >>> 3) * channel, 32); // ƒuƒƒbƒNƒTƒCƒY
-		this.writeInt16(bytes, bitsPerSample, 34);          // ƒTƒ“ƒvƒ‹‚ ‚½‚è‚Ìƒrƒbƒg”
-		this.writeString(bytes, 'data', 36);                // data ƒ`ƒƒƒ“ƒN
-		this.writeInt32(bytes, size, 40);                   // ”gŒ`ƒf[ƒ^‚ÌƒoƒCƒg”
+		// ãƒ˜ãƒƒãƒ€æ›¸ãè¾¼ã¿
+		this.writeString(bytes, 'RIFF', 0);                 // RIFF ãƒ˜ãƒƒãƒ€
+		this.writeInt32(bytes, offset + size - 8, 4);       // ãƒ•ã‚¡ã‚¤ãƒ«ã‚µã‚¤ã‚º - 8
+		this.writeString(bytes, 'WAVE', 8);                 // WAVE ãƒ˜ãƒƒãƒ€
+		this.writeString(bytes, 'fmt ', 12);                // fmt ãƒãƒ£ãƒ³ã‚¯
+		this.writeInt32(bytes, 16, 16);                     // fmt ãƒãƒ£ãƒ³ã‚¯ã®ãƒã‚¤ãƒˆæ•°
+		this.writeInt16(bytes, 1, 20);                      // ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆID
+		this.writeInt16(bytes, channel, 22);                // ãƒãƒ£ãƒ³ãƒãƒ«æ•°
+		this.writeInt32(bytes, bytesPerSec, 24);            // ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°ãƒ¬ãƒ¼ãƒˆ
+		this.writeInt32(bytes, bytesPerSec * (bitsPerSample >>> 3) * channel, 28); // ãƒ‡ãƒ¼ã‚¿é€Ÿåº¦
+		this.writeInt16(bytes, (bitsPerSample >>> 3) * channel, 32); // ãƒ–ãƒ­ãƒƒã‚¯ã‚µã‚¤ã‚º
+		this.writeInt16(bytes, bitsPerSample, 34);          // ã‚µãƒ³ãƒ—ãƒ«ã‚ãŸã‚Šã®ãƒ“ãƒƒãƒˆæ•°
+		this.writeString(bytes, 'data', 36);                // data ãƒãƒ£ãƒ³ã‚¯
+		this.writeInt32(bytes, size, 40);                   // æ³¢å½¢ãƒ‡ãƒ¼ã‚¿ã®ãƒã‚¤ãƒˆæ•°
 
-		// ”gŒ`ƒf[ƒ^‘‚«‚İ (ƒTƒCƒ“”g)
+		// æ³¢å½¢ãƒ‡ãƒ¼ã‚¿æ›¸ãè¾¼ã¿ (ã‚µã‚¤ãƒ³æ³¢)
 		var i;
 		for (i = 0; i < array.length; i ++) {
 		    this.writeInt16(bytes, array[i], offset + i*2);
 		}
 
-		// ƒoƒCƒg”z—ñ‚ğ•¶š—ñ‚É•ÏŠ·
+		// ãƒã‚¤ãƒˆé…åˆ—ã‚’æ–‡å­—åˆ—ã«å¤‰æ›
 		var temp = '';
 		for (i = 0; i < bytes.length; i++) {
 		    temp += String.fromCharCode(bytes[i]);
 		}
 
-		// •¶š—ñ‚ğ Data URI ‚É•ÏŠ·
+		// æ–‡å­—åˆ—ã‚’ Data URI ã«å¤‰æ›
 		var datauri = 'data:audio/wav;base64,' + btoa(temp);
 		
 		return datauri;

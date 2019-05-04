@@ -1,4 +1,5 @@
 var Period=new function(){
+	this.SECOND_WIDTH=44100;
 	this.get= function(type,value){
 		if (type=="initial"){
 			return this.initials[value];

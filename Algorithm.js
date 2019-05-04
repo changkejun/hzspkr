@@ -1,6 +1,4 @@
 var Algorithm=new function(){
-	this.SECOND_WIDTH=44100;
-	this.BLANK_WIDTH=14700;
 	this.TAIL_TIME_LENGTH=100;
 	///////////////////////////////////////////////////////////////////////
 	/**
@@ -33,97 +31,52 @@ var Algorithm=new function(){
 			}
 		}
 
-		var idxAry=[
-315,
-158,
-105,
-79,
-63,
-53,
-45,
-39,
-35,
-32,
-29,
-26,
-24,
-23,
-21,
-20,
-19,
-18,
-17,
-16,
-15,
-14,
-13,
-12,
-11,
-10,
-9,
-8,
-7,
-6,
-5,
-4,
-3,
-2,
-1,
-0,
-		];
-				
-		var paramAry=[
-0.064437563,
--0.016107788,
--0.008054695,
-0.003866684,
-0.011969825,
-0.016837153,
-0.0205915,
-0.023203599,
-0.024806873,
-0.025938304,
-0.027008572,
-0.027998,
-0.028604799,
-0.028891192,
-0.029435288,
-0.029689824,
-0.02993304,
-0.030164593,
-0.030384267,
-0.030591915,
-0.030787422,
-0.030970704,
-0.031141654,
-0.031300227,
-0.03144635,
-0.031579963,
-0.031701013,
-0.031809449,
-0.031905231,
-0.031988318,
-0.032058679,
-0.032116285,
-0.032161114,
-0.032193147,
-0.032212372,
-0.064437563,
-		];
-		for(i=0;i<array.length;i++){
-			var datatemp=0;
-			for(j=0;j<idxAry.length;j++){
-				if (i-idxAry[j]>=0){
-					datatemp+=paramAry[j]*array[i-idxAry[j]];
+		if (Period.SECOND_WIDTH==11025){
+			for(i=3;i<array.length-3;i++){
+				array[i]=
+				(+array[i+2]*0.25
+				+array[i+1]*0.5
+				  +array[i]*0.618
+				-array[i-1]*0.5
+				-array[i-2]*0.25
+				);
+			}
+		}else{
+			for(i=10;i<array.length-10;i++){
+				array[i]=
+				(+array[i+9]*0.000976563
+				+array[i+8]*0.001953125
+				+array[i+7]*0.00390625
+				+array[i+6]*0.0078125
+				+array[i+5]*0.015625
+				+array[i+4]*0.03125
+				+array[i+3]*0.0625
+				+array[i+2]*0.125
+				+array[i+1]*0.25
+				  +array[i]*0.5
+				-array[i-1]*0.5
+				-array[i-2]*0.25
+				-array[i-3]*0.125
+				-array[i-4]*0.0625
+				-array[i-5]*0.03125
+				-array[i-6]*0.015625
+				-array[i-7]*0.0078125
+				-array[i-8]*0.00390625
+				-array[i-9]*0.001953125
+				-array[i-10]*0.000976563
+				);
+			}
+			for(i=0;i<array.length;i++){
+				if (i<44){
+					array[i]=array[i];
 				}else{
-					datatemp+=paramAry[j]*array[i];
+					array[i]=array[i]+array[i-44]*0.618;
 				}
 			}
-			array[i]=datatemp;
 		}
 
 		for(i=0;i<array.length;i++){
-			var dataOrg=array[i]*5;
+			var dataOrg=array[i];
 			var data;
 			if(dataOrg>32767){
 				data=32767;
@@ -153,9 +106,9 @@ var Algorithm=new function(){
 		}
 		var lengthbit=0;
 		if (isShort){
-			lengthbit=parseInt((token.timeLength)*this.SECOND_WIDTH/1000);
+			lengthbit=parseInt((token.timeLength)*Period.SECOND_WIDTH/1000);
 		}else{
-			lengthbit=parseInt((token.timeLength+200)*this.SECOND_WIDTH/1000);
+			lengthbit=parseInt((token.timeLength+200)*Period.SECOND_WIDTH/1000);
 		}
 		for (var i=retData.length;i<lengthbit;i++){
 			retData.push(0);
@@ -189,53 +142,51 @@ var Algorithm=new function(){
 		if(tailP0==null){//句子开头的时候,tailP是null
 			vlModel[2]=0;
 		}
-		var timeLength=(token.timeLength+token.timeLengthCi/2-112)/7;
-		var lastTimeLength=timeLength+token.timeLengthCi/2;
-
-		var hd=token.head;
-
-		if(token.tone==1||token.tone==3||token.tone==0){
-			if(tailP0!=null)retData=this.createTonePart(retData,tailP0,tailP0,0,hzModel,vlModel,timeLength);
-			if(tailP0!=null)retData=this.createTonePart(retData,tailP0,head0,1,hzModel,vlModel,timeLength);
-			retData=this.createTonePart(retData,head0,head,2,hzModel,vlModel,timeLength);
-			retData=this.createTonePart(retData,head,head,3,hzModel,vlModel,28);
-			retData=this.createTonePart(retData,head,core,4,hzModel,vlModel,timeLength);
-			retData=this.createTonePart(retData,core,core,5,hzModel,vlModel,28);
-			retData=this.createTonePart(retData,core,middle,6,hzModel,vlModel,timeLength);
-			retData=this.createTonePart(retData,middle,middle,7,hzModel,vlModel,28);
-			retData=this.createTonePart(retData,middle,tail,8,hzModel,vlModel,timeLength);
-			retData=this.createTonePart(retData,tail,tail,9,hzModel,vlModel,28);
-			retData=this.createTonePart(retData,tail,tail,10,hzModel,vlModel,lastTimeLength);
-		}else if(token.tone==2){
-			if(tailP0!=null)retData=this.createTonePart(retData,tailP0,tailP0,0,hzModel,vlModel,timeLength);
-			if(tailP0!=null)retData=this.createTonePart(retData,tailP0,head0,1,hzModel,vlModel,timeLength);
-			retData=this.createTonePart(retData,head0,head,2,hzModel,vlModel,timeLength);
-			retData=this.createTonePart(retData,head,head,3,hzModel,vlModel,timeLength);
-			retData=this.createTonePart(retData,head,core,4,hzModel,vlModel,timeLength);
-			retData=this.createTonePart(retData,core,core,5,hzModel,vlModel,28);
-			retData=this.createTonePart(retData,core,middle,6,hzModel,vlModel,28);
-			retData=this.createTonePart(retData,middle,middle,7,hzModel,vlModel,28);
-			retData=this.createTonePart(retData,middle,tail,8,hzModel,vlModel,28);
-			retData=this.createTonePart(retData,tail,tail,9,hzModel,vlModel,timeLength);
-			retData=this.createTonePart(retData,tail,tail,10,hzModel,vlModel,lastTimeLength);
-		}else if(token.tone==4){
-			if(tailP0!=null)retData=this.createTonePart(retData,tailP0,tailP0,0,hzModel,vlModel,timeLength);
-			if(tailP0!=null)retData=this.createTonePart(retData,tailP0,head0,1,hzModel,vlModel,timeLength);
-			retData=this.createTonePart(retData,head0,head,2,hzModel,vlModel,28);
-			retData=this.createTonePart(retData,head,head,3,hzModel,vlModel,28);
-			retData=this.createTonePart(retData,head,core,4,hzModel,vlModel,28);
-			retData=this.createTonePart(retData,core,core,5,hzModel,vlModel,28);
-			retData=this.createTonePart(retData,core,middle,6,hzModel,vlModel,timeLength);
-			retData=this.createTonePart(retData,middle,middle,7,hzModel,vlModel,timeLength);
-			retData=this.createTonePart(retData,middle,tail,8,hzModel,vlModel,timeLength);
-			retData=this.createTonePart(retData,tail,tail,9,hzModel,vlModel,timeLength);
-			retData=this.createTonePart(retData,tail,tail,10,hzModel,vlModel,lastTimeLength);
+		if (token.timeLength<200)token.timeLength=200;
+			
+			
+		var timeLengthP=0;
+		var timeLengthN=0;
+		
+		if(token.isCiP){
+			timeLengthP=20;
+		}else{
+			timeLengthP=0;
 		}
+		if(token.isCiN){
+			timeLengthN=20;
+		}else{
+			timeLengthN=0;
+		}
+			
+		//TODO 这样假设以下. 如果单个字的话,长度 300 如果是字字的话 长度缩短, 
+		//最短 词间 200 非词间 250 
+		//如何?
 
+		var timeLength=(token.timeLength-timeLengthP*3-timeLengthN*3)/
+			(5+3*(timeLengthP>0?0:1)+3*(timeLengthN>0?0:1));
+		if (timeLengthP==0)timeLengthP=timeLength;
+		if (timeLengthN==0)timeLengthN=timeLength;
+
+		if(tailP0!=null)retData=this.createTonePart(retData,tailP0,tailP0,0,hzModel,vlModel,timeLengthP);
+		if(tailP0!=null)retData=this.createTonePart(retData,tailP0,head0,1,hzModel,vlModel,timeLength*0.2+timeLengthP*0.8);
+		retData=this.createTonePart(retData,head0,head,2,hzModel,vlModel,timeLength*0.4+timeLengthP*0.6);
+		retData=this.createTonePart(retData,head,head,3,hzModel,vlModel,timeLength*0.6+timeLengthP*0.4);
+		retData=this.createTonePart(retData,head,core,4,hzModel,vlModel,timeLength*0.8+timeLengthP*0.2);
+		
+		retData=this.createTonePart(retData,core,core,5,hzModel,vlModel,timeLength);
+		
+		retData=this.createTonePart(retData,core,middle,6,hzModel,vlModel,timeLength*0.8+timeLengthN*0.2);
+		retData=this.createTonePart(retData,middle,middle,7,hzModel,vlModel,timeLength*0.6+timeLengthN*0.4);
+		retData=this.createTonePart(retData,middle,tail,8,hzModel,vlModel,timeLength*0.4+timeLengthN*0.6);
+		retData=this.createTonePart(retData,tail,tail,9,hzModel,vlModel,timeLength*0.2+timeLengthN*0.8);
+		
+		retData=this.createTonePart(retData,tail,tail,10,hzModel,vlModel,timeLengthN);
+		
 		if (initial==null){
 			initialData=[];
 		}else{
-			initialData=this.createToneInitialPart(initial,token.volume/2);//声母部分加大提高分辨
+			initialData=this.createToneInitialPart(initial,token.volume);//声母部分加大提高分辨
 		}
 		for(var j=0;j<initialData.length;j++){
 			if(initialData.length-1-j<retData.length)
@@ -301,9 +252,9 @@ var Algorithm=new function(){
 			//周期结束时的采样
 			var periodSampleT=this.restorePeriod(partT,false,this.getHzIndex(periodHzT));
 			//周期的大小
-			var periodSize=(this.SECOND_WIDTH/periodHzF+this.SECOND_WIDTH/periodHzT)/2;
-			var periodSizeF=this.SECOND_WIDTH/periodHzF;
-			var periodSizeT=this.SECOND_WIDTH/periodHzT;
+			var periodSize=(Period.SECOND_WIDTH/periodHzF+Period.SECOND_WIDTH/periodHzT)/2;
+			var periodSizeF=Period.SECOND_WIDTH/periodHzF;
+			var periodSizeT=Period.SECOND_WIDTH/periodHzT;
 			
 			for(var widthIndex=0;widthIndex<periodSize;widthIndex++){
 
@@ -337,18 +288,14 @@ var Algorithm=new function(){
 		else if (115>=hz&&hz>105){return 6;}	//110
 		else if (105>=hz&&hz>95){return 7;}		//100
 		else if (95>=hz&&hz>85){return 8;}		//90
-		else if (85>=hz){return 9;}				//80
-		return 0;
+		else {return 9;}				//80
 	};
-
 	this.restorePeriod= function(tonePart,initFlag,index){
-		var defaultwidth=0;
 		var data;
 		var lastint;
 		
 		if(initFlag){
 			if (tonePart.length==1){
-				defaultwidth=1320;//static
 				data= Adpcm.adpcm_decoder(tonePart[0],0,28);
 				tonePart[1]=data;
 			}else{

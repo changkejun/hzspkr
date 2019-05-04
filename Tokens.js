@@ -1,6 +1,6 @@
 var Tokens=new function(){
 	this.MAX_LOG=16; 
-	this.MAX_HZ_CHANGED=30;
+	this.MAX_HZ_CHANGED=32;
 	this.UNIT_DYZ_WEIGHT=100;
 	///////////////////////////////////////////////////////////////////////
 	/**
@@ -90,14 +90,6 @@ var Tokens=new function(){
 				}
 			}
 		}
-		for(idxSentence=0;idxSentence<tokens.length;idxSentence++){
-			token=tokens[idxSentence];
-			if (token.pinyin.indexOf("1")>0)		{token.headThroat=5;token.middleThroat=5;token.tailThroat=5;}
-			else if (token.pinyin.indexOf("2")>0)	{token.headThroat=1;token.middleThroat=3;token.tailThroat=5;}
-			else if (token.pinyin.indexOf("3")>0)	{token.headThroat=4;token.middleThroat=1;token.tailThroat=4;}
-			else if (token.pinyin.indexOf("4")>0)	{token.headThroat=5;token.middleThroat=3;token.tailThroat=1;}
-			else									{token.headThroat=3;token.middleThroat=2;token.tailThroat=2;}
-		}
 		
 		return tokens;
 	};
@@ -117,43 +109,21 @@ var Tokens=new function(){
 			tokenP=tokens[idxTokens-1];
 			tokenN=tokens[idxTokens+1];
 
-			token.timeLength=40;
-			token.timeLengthCi=0;
-			//如果联系紧密就短.
-			if (tokenP!=null&&tokenP.pinyin!="#"){//如果前面不是符号,就和前后大的比较.
-
-				token.timeLength+=200*(1-(token.logarithmP+token.logarithmN)/4/this.MAX_LOG);
-				//如果联系变化大就短.
-				token.timeLength+=this.MAX_LOG-token.logarithmHz;
-
-				if (token.logarithmP>token.logarithmN){
-					token.timeLengthCi+=5*(token.logarithmP-token.logarithmN);
-				}
-				if (token.logarithmPP>token.logarithmNN){
-					token.timeLengthCi+=10*(token.logarithmPP-token.logarithmNN);
-				}
-				//如果前韵母终是闭口,本韵母始是开口,稍微长一些.
-				if (tokenP!=null){
-					token.timeLength+=	Math.abs(tokenP.tailTips-token.headTips)
-										+	Math.abs(tokenP.tailTeeth-token.headTeeth)
-										+	Math.abs(tokenP.tailMouth-token.headMouth)
-										+	Math.abs(tokenP.tailThroat-token.headThroat);
-				}else{
-					token.timeLength+=20;
-				}
-				token.timeLength+=	Math.abs(token.headTips-token.middleTips)
-									+	Math.abs(token.headTeeth-token.middleTeeth)
-									+	Math.abs(token.headMouth-token.middleMouth)
-									+	Math.abs(token.headThroat-token.middleThroat);
-				token.timeLength+=	Math.abs(token.middleTips-token.tailTips)
-									+	Math.abs(token.middleTeeth-token.tailTeeth)
-									+	Math.abs(token.middleMouth-token.tailMouth)
-									+	Math.abs(token.middleThroat-token.tailThroat);
-				
-			}else{//如果前面是符号,就和后面比较.
-				token.timeLength=300;
+			token.timeLength=0;
+			
+			if (token.isCiP){
+				token.timeLength+=(100+(1-token.logarithmP/this.MAX_LOG)*100)/2;
+			}else{
+				token.timeLength+=(175+(1-token.logarithmP/this.MAX_LOG)*100)/2;
 			}
-			//TODO speed
+			if (token.isCiN){
+				token.timeLength+=(100+(1-token.logarithmN/this.MAX_LOG)*100)/2;
+			}else{
+				token.timeLength+=(175+(1-token.logarithmN/this.MAX_LOG)*100)/2;
+			}
+			token.timeLength+=(1-token.logarithmHz/this.MAX_LOG)*25;
+
+
 		}
 		return tokens;
 	};
@@ -166,7 +136,7 @@ var Tokens=new function(){
 		var token;
 		var tokenP;
 		var tokenN;
-		var defaultVolume=0.5;
+		var defaultVolume=0.159;
 		for(idxTokens=0;idxTokens<tokens.length;idxTokens++){
 			token=tokens[idxTokens];
 			tokenP=tokens[idxTokens-1];
@@ -174,11 +144,25 @@ var Tokens=new function(){
 			if (token.pinyin=="#"){
 				token.volume=0;
 			}else{
-				token.volume=defaultVolume;
+				if(token.tone==0){
+					defaultVolume=0.118;
+				}else if(token.tone==1){
+					defaultVolume=0.199;
+				}else if(token.tone==2){
+					defaultVolume=0.122;
+				}else if(token.tone==3){
+					defaultVolume=0.118;
+				}else if(token.tone==4){
+					defaultVolume=0.197;
+				}
 				if (tokenP!=null&&tokenP.pinyin!="#"){//如果前面不是符号,就和前后大的比较.
-					token.volume*=0.7*(1-Math.max(token.logarithmP,token.logarithmN)/2/this.MAX_LOG);
+					if (token.isCiP){
+						token.volume=defaultVolume/(1-(token.logarithmP)/2/this.MAX_LOG);
+					}else{
+						token.volume=defaultVolume/(1-(token.logarithmP/2)/2/this.MAX_LOG);
+					}
 				}else{//如果前面是符号,就和后面比较.
-					token.volume*=0.7*(1-(token.logarithmN)/2/this.MAX_LOG);
+					token.volume=defaultVolume;
 				}
 			}
 		}

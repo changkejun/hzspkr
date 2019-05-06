@@ -1,16 +1,13 @@
 <HTML>
 <HEAD>
 <META CONTENT="TEXT/HTML;CHARSET=UTF-8" HTTP-EQUIV="CONTENT-TYPE">
+<script src="hzspkr/loader.js"></script>
 
-<script src="jquery-min.js"></script>
-<script src="HzSpkr-min.js"></script>
 <SCRIPT>
 		function btnclick(){
-
-			var tokens=Tokens.fire($("#textarea1").val(),{});
+			var tokens=Tokens.fire(document.getElementById("textarea1").value,{});
 			var sentenceSoundBuffer=Algorithm.fire(tokens);
-			$("#audio1").attr("src",sentenceSoundBuffer);
-
+			document.getElementById("audio1").src=sentenceSoundBuffer;
 		}
 
 </SCRIPT>

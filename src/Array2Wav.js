@@ -9,20 +9,69 @@ var Array2Wav=new function(){
 	// バイト配列に 32-bit 整数を書き込む
 	this.writeInt32=function(bytes, val, offset) {
 	    bytes[offset] = val & 255;
-	    val >>>= 8;
+	    val= val >>> 8;
 	    bytes[offset + 1] = val & 255;
-	    val >>>= 8;
+	    val= val >>> 8;
 	    bytes[offset + 2] = val & 255;
-	    val >>>= 8;
+	    val= val >>> 8;
 	    bytes[offset + 3] = val & 255;
 	};
 
 	// バイト配列に 16-bit 整数を書き込む
 	this.writeInt16=function(bytes, val, offset) {
 	    bytes[offset] = val & 255;
-	    val >>>= 8;
+	    val= val >>> 8;
 	    bytes[offset + 1] = val & 255;
 	};
+	//Int32配列をbase64に変換する
+	this.Int32ArrayToBase64=function(array){
+		var size=array.length*4;
+		var bytes=new Uint8Array(size);
+		var i;
+		for (i = 0; i < array.length; i ++) {
+		    this.writeInt32(bytes, array[i], i*4);
+		}
+		// バイト配列を文字列に変換
+		var temp = '';
+		for (i = 0; i < bytes.length; i++) {
+		    temp += String.fromCharCode(bytes[i]);
+		}
+		return btoa(temp);
+	}
+	//base64をInt32配列に変換する
+	this.base64ToInt32Array=function(base64str){
+		var temp=atob(base64str);
+		var ret=[];
+		for(var i=0;i<temp.length;i++){
+			ret.push(temp.charCodeAt(i) | (temp.charCodeAt(++i)<<8) | (temp.charCodeAt(++i)<<16) | (temp.charCodeAt(++i)<<24));
+		}
+		return ret;
+	}
+	
+	//Int16配列をbase64に変換する
+	this.Int16ArrayToBase64=function(array){
+		var size=array.length*2;
+		var bytes=new Uint8Array(size);
+		var i;
+		for (i = 0; i < array.length; i ++) {
+		    this.writeInt16(bytes, array[i], i*2);
+		}
+		// バイト配列を文字列に変換
+		var temp = '';
+		for (i = 0; i < bytes.length; i++) {
+		    temp += String.fromCharCode(bytes[i]);
+		}
+		return btoa(temp);
+	}
+	//base64をInt16配列に変換する
+	this.base64ToInt16Array=function(base64str){
+		var temp=atob(base64str);
+		var ret=[];
+		for(var i=0;i<temp.length;i++){
+			ret.push(temp.charCodeAt(i) | (temp.charCodeAt(++i)<<8));
+		}
+		return ret;
+	}
 
 	// -----------------------------------------------------------------------------
 	this.fire=function(array){

@@ -31,48 +31,11 @@ var Algorithm=new function(){
 			}
 		}
 
-		if (Period.SECOND_WIDTH==11025){
-			for(i=3;i<array.length-3;i++){
-				array[i]=
-				(+array[i+2]*0.25
-				+array[i+1]*0.5
-				  +array[i]*0.618
-				-array[i-1]*0.5
-				-array[i-2]*0.25
-				);
-			}
-		}else{
-			for(i=10;i<array.length-10;i++){
-				array[i]=
-				(+array[i+9]*0.000976563
-				+array[i+8]*0.001953125
-				+array[i+7]*0.00390625
-				+array[i+6]*0.0078125
-				+array[i+5]*0.015625
-				+array[i+4]*0.03125
-				+array[i+3]*0.0625
-				+array[i+2]*0.125
-				+array[i+1]*0.25
-				  +array[i]*0.5
-				-array[i-1]*0.5
-				-array[i-2]*0.25
-				-array[i-3]*0.125
-				-array[i-4]*0.0625
-				-array[i-5]*0.03125
-				-array[i-6]*0.015625
-				-array[i-7]*0.0078125
-				-array[i-8]*0.00390625
-				-array[i-9]*0.001953125
-				-array[i-10]*0.000976563
-				);
-			}
-			for(i=0;i<array.length;i++){
-				if (i<44){
-					array[i]=array[i];
-				}else{
-					array[i]=array[i]+array[i-44]*0.618;
-				}
-			}
+		for(i=3;i<array.length-3;i++){
+			array[i]=(array[i-2]+array[i-1]+array[i]+array[i+1]+array[i+2])/5;
+		}
+		for(i=512;i<array.length-512;i++){
+			array[i]=(array[i]-array[i-512]*0.5)/1.5;
 		}
 
 		for(i=0;i<array.length;i++){
@@ -296,14 +259,22 @@ var Algorithm=new function(){
 		
 		if(initFlag){
 			if (tonePart.length==1){
-				data= Adpcm.adpcm_decoder(tonePart[0],0,28);
+				if (tonePart[0] instanceof Array){
+					data= Adpcm.adpcm_decoder(tonePart[0],0,28);
+				}else{
+					data= Adpcm.adpcm_decoder(Array2Wav.base64ToInt16Array(tonePart[0]),0,28);
+				}
 				tonePart[1]=data;
 			}else{
 				data=tonePart[1];
 			}
 		}else{
 			if (tonePart[index+10]==null){
-				data= Adpcm.adpcm_decoder(tonePart[index],30000,49);
+				if (tonePart[index] instanceof Array){
+					data= Adpcm.adpcm_decoder(tonePart[index],30000,49);
+				}else{
+					data= Adpcm.adpcm_decoder(Array2Wav.base64ToInt16Array(tonePart[index]),30000,49);
+				}
 				tonePart[index+10]=data;
 			}else{
 				data=tonePart[index+10];

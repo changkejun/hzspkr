@@ -14,15 +14,12 @@
 <script src="Algorithm.js"></script>
 <script src="Array2Wav.js"></script>
 
-<script src="run/jquery-min.js"></script>
 <!--script src="HzSpkr-min.js"></script-->
 <SCRIPT>
 		function btnclick(){
-
-			var tokens=Tokens.fire($("#textarea1").val(),{});
+			var tokens=Tokens.fire(document.getElementById("textarea1").value,{});
 			var sentenceSoundBuffer=Algorithm.fire(tokens);
-			$("#audio1").attr("src",sentenceSoundBuffer);
-
+			document.getElementById("audio1").src=sentenceSoundBuffer;
 		}
 
 </SCRIPT>
@@ -31,6 +28,27 @@
 <textarea id="textarea1" style="width:300px;height:100px">苏州昌门外有个十里街，街内有座古庙，因地方狭窄，人皆呼做葫芦庙。</textarea>
 <button onclick="btnclick()">run</button><br>
 <audio id="audio1" autoplay controls></audio>
+<br>
+<script>
+	/*
+	function doclick(){
+		var orgarys=Period.middles;
+		var ret={};
+		for (var key in orgarys){
+			ret[key]=[];
+			var ary=orgarys[key];
+			for(var i=0;i<ary.length;i++){
+				var str=Array2Wav.Int16ArrayToBase64(ary[i]);
+				ret[key].push(str);
+			}
+		}
+		document.getElementById("textarea1").value=JSON.stringify(ret);
+	}
+	*/
+
+	
+</script>
+<button onclick="doclick()">test</button>
 
 
 </BODY>

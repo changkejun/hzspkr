@@ -1,0 +1,49 @@
+<html>
+<head>
+<script src="gzip.min.js"></script>
+<script>
+function doGzip(){
+	var v=document.getElementById("thesrc").value;
+	var gzip = new Zlib.Gzip(strToUtf8Array(v));
+	var compressData = gzip.compress();
+	var blob = new Blob([compressData], { 'type': 'application/zip' });
+	if (window.navigator.msSaveBlob) {
+    	window.navigator.msSaveBlob(blob, 'hzspkr.lib');
+	    window.navigator.msSaveOrOpenBlob(blob, 'hzspkr.lib');
+	} else {
+	    document.getElementById('export').href = window.URL.createObjectURL(blob);
+	}
+}
+    function strToUtf8Array(str) {
+        var n = str.length,
+            idx = -1,
+            bytes = [],
+            i, j, c;
+
+        for (i = 0; i < n; ++i) {
+            c = str.charCodeAt(i);
+            if (c <= 0x7F) {
+                bytes[++idx] = c;
+            } else if (c <= 0x7FF) {
+                bytes[++idx] = 0xC0 | (c >>> 6);
+                bytes[++idx] = 0x80 | (c & 0x3F);
+            } else if (c <= 0xFFFF) {
+                bytes[++idx] = 0xE0 | (c >>> 12);
+                bytes[++idx] = 0x80 | ((c >>> 6) & 0x3F);
+                bytes[++idx] = 0x80 | (c & 0x3F);
+            } else {
+                bytes[++idx] = 0xF0 | (c >>> 18);
+                bytes[++idx] = 0x80 | ((c >>> 12) & 0x3F);
+                bytes[++idx] = 0x80 | ((c >>> 6) & 0x3F);
+                bytes[++idx] = 0x80 | (c & 0x3F);
+            }
+        }
+        return bytes;
+    };
+</script>
+</head>
+<body>
+<textarea id="thesrc"></textarea><button onclick="doGzip()">doGzip</button>
+<a class="btn btn-default" id="export" href="#" download="hzspkr.lib" />export</a>
+</body>
+</html>

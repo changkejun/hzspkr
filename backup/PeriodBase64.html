@@ -1,0 +1,55 @@
+<HTML>
+<HEAD>
+<META CONTENT="TEXT/HTML;CHARSET=UTF-8" HTTP-EQUIV="CONTENT-TYPE">
+
+<script src="Adpcm.js"></script>
+<script src="Duoyinzi.js"></script>
+<script src="Hanzi.js"></script>
+<script src="Logarithm.js"></script>
+<script src="Tokens.js"></script>
+<script src="Pinyin.js"></script>
+<script src="Hertz.js"></script>
+<script src="Volume.js"></script>
+<script src="Period.js"></script>
+<script src="Algorithm.js"></script>
+<script src="Array2Wav.js"></script>
+
+<!--script src="HzSpkr-min.js"></script-->
+<SCRIPT>
+		function btnclick(){
+			var tokens=Tokens.fire(document.getElementById("textarea1").value,{});
+			var sentenceSoundBuffer=Algorithm.fire(tokens);
+			document.getElementById("audio1").src=sentenceSoundBuffer;
+		}
+
+</SCRIPT>
+</HEAD>
+<BODY>
+<textarea id="textarea1" style="width:300px;height:100px">苏州昌门外有个十里街，街内有座古庙，因地方狭窄，人皆呼做葫芦庙。</textarea>
+<button onclick="btnclick()">run</button><br>
+<audio id="audio1" autoplay controls></audio>
+<br>
+<script>
+	
+	function doclick(){
+		var orgarys=Period.middles;
+		var ret={};
+		for (var key in orgarys){
+			ret[key]=[];
+			var ary=orgarys[key];
+			for(var i=0;i<ary.length;i++){
+				var str=Array2Wav.Int16ArrayToBase64(ary[i]);
+				ret[key].push(str);
+			}
+		}
+		document.getElementById("textarea1").value=JSON.stringify(ret);
+	}
+	
+
+	
+</script>
+<button onclick="doclick()">Period base64</button>
+
+
+</BODY>
+</HTML>
